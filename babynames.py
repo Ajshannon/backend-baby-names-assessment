@@ -46,7 +46,31 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
     # +++your code here+++
-    return
+    final_names = []
+    f = open(filename, 'r')
+    raw_data = f.read()
+    year_match = re.search(r'Popularity\sin\s(\d\d\d\d)', raw_data)
+    if year_match:
+        year = year_match.group(1)
+        final_names.append(year)
+
+    # print "\n Year: ", year, "\n"
+    tuples = re.findall(
+        r'<td>(\d+)</td><td>(\w+)</td>\<td>(\w+)</td>', raw_data)
+    names = {}
+    for data in tuples:
+        (rank, theBoyName, theGirlName) = data
+        if theBoyName not in names:
+            names[theBoyName] = rank
+        if theGirlName not in names:
+            names[theBoyName] = rank
+    ranked_names = sorted(names.keys())
+
+    for name in ranked_names:
+        final_names.append(name + " " + names[name])
+
+    # print(re.sub(r"[^a-zA-Z0-9]+", ' ', k))
+    return final_names
 
 
 def main():
@@ -55,7 +79,8 @@ def main():
     parser.add_argument(
         '--summaryfile', help='creates a summary file', action='store_true')
     # The nargs option instructs the parser to expect 1 or more filenames.
-    # It will also expand wildcards just like the shell, e.g. 'baby*.html' will work.
+    # It will also expand wildcards just like the shell, e.g. 'baby*.html' 
+    # will work.
     parser.add_argument('files', help='filename(s) to parse', nargs='+')
     args = parser.parse_args()
 
@@ -64,9 +89,19 @@ def main():
         sys.exit(1)
 
     file_list = args.files
+    create_summary = args.summaryfile
+
+    for file in file_list:
+        names = extract_names(file)
+        if create_summary:
+            txtFile = open(file + '.summary', 'w')
+            txtFile.write(names)
+            txtFile.close()
+            pass
+        else:
+            print names
 
     # option flag
-    create_summary = args.summaryfile
 
     # +++your code here+++
     # For each filename, get the names, then either print the text output
