@@ -93,13 +93,15 @@ def main():
 
     for file in file_list:
         names = extract_names(file)
+        text = '\n'.join(names)
+
         if create_summary:
             txtFile = open(file + '.summary', 'w')
-            txtFile.write(names)
+            txtFile.write(text)
             txtFile.close()
             pass
         else:
-            print names
+            print text
 
     # option flag
 
